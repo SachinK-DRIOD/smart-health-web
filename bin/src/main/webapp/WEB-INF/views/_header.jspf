@@ -1,0 +1,44 @@
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<c:set var="ctx" value="${pageContext.request.contextPath}"/>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><c:out value="${empty title ? 'Smart Health' : title}"/> | Smart Health</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+  <link rel="stylesheet" href="${ctx}/css/style.css">
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="${ctx}/dashboard">Smart Health</a>
+  <c:if test="${not empty sessionScope.user}">
+    <nav>
+      <c:choose>
+        <c:when test="${sessionScope.user.role eq 'PATIENT'}">
+          <a href="${ctx}/dashboard">Dashboard</a>
+          <a href="${ctx}/patient/form">Your details</a>
+          <a href="${ctx}/symptoms">Check symptoms</a>
+          <a href="${ctx}/appointments">Appointments</a>
+        </c:when>
+        <c:when test="${sessionScope.user.role eq 'DOCTOR'}"><a href="${ctx}/doctor/dashboard">Appointments</a></c:when>
+        <c:otherwise><a href="${ctx}/admin">Admin</a></c:otherwise>
+      </c:choose>
+    </nav>
+    <form method="post" action="${ctx}/logout" class="logout">
+      <input type="hidden" name="csrf" value="${sessionScope.csrf}">
+      <span class="who"><c:out value="${sessionScope.user.name}"/></span>
+      <button type="submit" class="link">Sign out</button>
+    </form>
+  </c:if>
+</header>
+<main class="wrap">
+<c:if test="${not empty sessionScope.flash}">
+  <p class="notice ok" role="status"><c:out value="${sessionScope.flash}"/></p>
+  <c:remove var="flash" scope="session"/>
+</c:if>
+<c:if test="${not empty error}"><p class="notice bad" role="alert"><c:out value="${error}"/></p></c:if>
